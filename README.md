@@ -1,55 +1,17 @@
 ## Maintained fork
 
-This fork preserves the tested OSM default-save correction and ordinary-upload guard from a WiPi64 installation. The first enhancement adds asynchronous loading status, busy handling and failure reporting while retaining the existing transfer tools and Single Boot behavior.
+This fork preserves the cabinet-tested OSM default-save correction and ordinary-upload guard, adds source-merged phone loading-status reporting, and carries a draft rebuildable native text-menu baseline. Source merge, offline proof and hardware acceptance are separate; the current cabinet retains its previously tested fixes and original menu binaries.
 
-- [Baseline and preserved behavior](docs/fork-baseline.md)
-- [Loading status: behavior, tests and deployment](docs/loading-status.md)
-- [Deferred CRT signal-loss clicking investigation](docs/crt-sync-follow-up.md)
-- [Agent instructions: architecture, invariants and verification](AGENTS.md)
+Start with these maintained records:
 
-The enhancement is tracked in [PR #1](https://github.com/wassoufa/WiPiNetbooter64/pull/1) and has not been deployed to the cabinet. Merging source does not install it on the Pi or establish hardware acceptance. No personal cabinet settings, credentials, logs or ROMs are added by these changes.
+- [AI start-here and current state](docs/ai-handoff.md): fork/PR/branch identities, source pins, candidate checksums, proof and unknowns.
+- [Ordered roadmap and acceptance gates](docs/roadmap.md): emulator preparation, native baseline, separate phone status acceptance, five-game artwork and optional video/details.
+- [Emulator-to-Naomi test and diagnostic plan](docs/native-runtime-test-plan.md), with a [fillable result/bug evidence template](docs/templates/runtime-test-result.md).
+- [Baseline and preserved behavior](docs/fork-baseline.md), [loading-status behavior and deployment](docs/loading-status.md), and [native build/proof details](native/README.md).
+- [Illustrated-menu investigation and CRT/video feasibility](docs/illustrated-osm-investigation.md), [offline layout preview](docs/previews/illustrated-osm.html), and [separate CRT signal-loss investigation](docs/crt-sync-follow-up.md).
+- [Agent instructions: architecture, invariants and verification](AGENTS.md).
 
-### Current status
-
-- **Fork created:** [wassoufa/WiPiNetbooter64](https://github.com/wassoufa/WiPiNetbooter64), based on cassianoperin's 64-bit fork. The public upstream is older than the installed `wipi 0.22-0` package; it is not a complete copy of that installation.
-- **Baseline fixes preserved:** saving the OSM default retains all eight NetDIMM configuration fields, and the ordinary loader uses a per-target lock to prevent overlapping uploads from duplicate requests. These fixes have been tested on the cabinet.
-- **First enhancement implemented:** [PR #1](https://github.com/wassoufa/WiPiNetbooter64/pull/1) adds preparation, upload, game-start and error states. A live upload can wait at 0% without being declared failed. Repeated requests follow the active upload; status polling, refresh and status retries never resend a game. Old completion records are ignored for a new launch.
-- **Offline checks pass:** loader concurrency/failure tests, status-helper tests, PHP HTTP tests with a fake sender, OSM serialization regression checks and PHP syntax checks. Successful sender exit means the transfer and game-start command completed; playable gameplay still needs cabinet confirmation.
-- **Hardware acceptance pending:** the first enhancement has not been installed on the Pi. The cabinet retains the previously tested fixes.
-
-### Rollout plan
-
-1. Use PR #1 as the reviewed source baseline. Its offline checks pass; cabinet deployment and acceptance remain separate. Source research and offline design previews can proceed while hardware testing is pending.
-2. With approval and no active transfer, back up the affected Pi files and their ownership/permissions, verify the rollback archive, then install the helpers before their callers. Follow the [deployment and rollback instructions](docs/loading-status.md#deployment-and-acceptance--not-yet-performed).
-3. Test one normal phone upload, a duplicate request while busy, a subsequent different game, and switching from the arcade menu to the phone after the menu transfer finishes. Confirm that a 0% pause produces a waiting explanation and one transfer. Check normal Single Boot startup in a user-coordinated test.
-4. Record the observed result on Naomi as well as the logs. Resolve any regression before deploying further enhancements. Keep failure/interruption tests in fixtures rather than deliberately disrupting a live upload.
-5. Add later features separately, with focused offline checks and a backed-up cabinet test for each change.
-
-Preserve Single Boot, the OSM repair, upload locking, existing network settings, game files and optional control/card behavior. This enhancement does not change reset timing or NOW LOADING behavior. The ordinary-loader lock does not coordinate independent OSM or standalone transfers: finish the arcade-menu transfer before launching from the phone.
-
-### Enhancement roadmap
-
-The fork review identified the following candidates. Only the first enhancement and its launch validation are implemented; later product changes remain proposals to scope and test individually.
-
-| Order | Enhancement | Status and intended scope |
-| --- | --- | --- |
-| 1 | Clear loading, busy and failure reporting | Implemented in PR #1; cabinet acceptance pending. Known-ROM selection, configured-target compatibility checks and individual shell-argument quoting are included. |
-| 2 | Optional phone-friendly launcher | Proposed next after loading is stable: artwork grid, favourites, recent games, game details and an explicit launch button, using the existing loader and status flow. Keep the configuration pages and CRT menu available. |
-| 3 | Search and touch controls | Proposed: title search, system/genre/orientation/control filters and larger touch controls within the chosen launcher. Evaluate one interface rather than combining complete interfaces from different forks. |
-| 4 | Bulk game-list management | Proposed: enable/disable selected games without deleting ROMs, using locked, atomic CSV updates that preserve metadata. Distinguish browser-only hiding from changes that affect OSM; review Naomi/Naomi 2 filtering separately. |
-| 5 | Artwork and catalog corrections | Optional: compare individual artwork files and catalog rows with installed filenames; preserve custom entries such as the CRT tester. Themes are optional polish. |
-
-Additional work: [game artwork in the default arcade menu](docs/illustrated-osm-investigation.md), with joystick selection and a large image/title preview inspired by the phone interface. The [native text-menu baseline](native/README.md) now builds locally with WiPi's configuration layout and guarded SRAM exchange; focused C/host-protocol tests pass. It remains experimental and has not replaced the installed menu. An [offline interactive layout preview](docs/previews/illustrated-osm.html) is also available. Native artwork and emulator/cabinet acceptance remain pending.
-
-After baseline acceptance, [check a game-details view with video and information below it](docs/illustrated-osm-investigation.md#post-baseline-check-game-details-video-and-crt-experience), using the phone view as a reference. Evaluate CRT readability, joystick/Back/quick-launch behavior, metadata reuse and measured startup/input/memory cost. Native video is unproven; retain artwork/details if it adds noticeable delay.
-
-Sources for selective adaptation include [WiPiNetbooter-NG](https://github.com/metisnc/WiPiNetbooter-NG/tree/23412c084e5fc19d920308f4a2d1566c59181ce2), [thegoodguys80's interface work](https://github.com/thegoodguys80/WiPiNetbooter/tree/38fb4d42cadbde53ddb2d9c4639a84c6b6fafa13) and [AyanamiRei1's artwork/catalog changes](https://github.com/AyanamiRei1/WiPiNetbooter/tree/03282df71e0cf12a1361cbdc748f7b2f12008c77). Their alternative backends, configuration writers and full images need separate compatibility review before adoption. A phone-only launcher does not require a kiosk/display installer or an OS upgrade.
-
-### Deferred CRT investigation
-
-The Toshiba PD2367 is already running at 31 kHz. Clicking occurs when Naomi's video signal disappears during a reset and returns. Sync loss/reacquisition is the working explanation; chassis damage has not been established.
-
-Later, compare the picture interruptions and click counts for arcade-menu and phone launches. The sender's `--disable-now-loading` option can skip the preliminary loading request, but the final game-start reset remains. Any controlled comparison needs a backup, approval and checks of loading compatibility and timing. No CRT-related code or settings changes have been made. See the [recorded follow-up](docs/crt-sync-follow-up.md).
+Preserve Single Boot, physical short-Start launch and long-Start settings, eight-field configuration, custom game entries, existing networking and optional controls/cards. The ordinary-loader lock does not coordinate independent OSM/standalone transfers: finish the arcade-menu transfer before a phone launch. No roadmap entry itself authorizes a deployment, game launch or startup/reboot test.
 
 # WiPiNetbooter64
 

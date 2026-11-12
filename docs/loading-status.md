@@ -1,5 +1,7 @@
 # Loading status enhancement
 
+[PR #1](https://github.com/wassoufa/WiPiNetbooter64/pull/1) is merged source; deployment and cabinet acceptance of the new status enhancement remain pending. See [current state](ai-handoff.md), [the separate acceptance track](roadmap.md) and [the runtime evidence plan](native-runtime-test-plan.md) with its [result template](templates/runtime-test-result.md). This document owns behavior and deployment details, not the moving source/artifact snapshot.
+
 The existing game list still selects a compatible configured NetDIMM. `load.php` validates the selected ROM against the game list and installed ROM directory, quotes each argument, starts the ordinary loader and immediately redirects to `loadprogress.php`. `loadnochrome.php` remains a compatibility entry point to the same flow. Chrome and mobile browsers no longer need separate streaming/wait loops.
 
 Only a launch endpoint starts a loader. Progress polling, page refresh and the **Check status again** button never resend a game. If an active job is already known, a new launch follows its status. The backend lock remains the authority for simultaneous requests that race before status is written.

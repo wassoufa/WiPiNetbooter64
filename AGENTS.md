@@ -1,21 +1,21 @@
 # Working on this fork
 
-These instructions apply throughout the repository. Read the [README](README.md), [baseline](docs/fork-baseline.md) and [loading-status notes](docs/loading-status.md) before changing the loading or configuration paths. Keep these documents accurate when behavior or deployment status changes.
+These instructions apply throughout the repository. Start with the [README](README.md) and [AI handoff/current state](docs/ai-handoff.md). Read the [baseline](docs/fork-baseline.md) and [loading-status notes](docs/loading-status.md) before changing loading or configuration paths. Follow the [ordered roadmap](docs/roadmap.md), [runtime diagnostic/test plan](docs/native-runtime-test-plan.md) and [fillable result/bug template](docs/templates/runtime-test-result.md). Keep the handoff accurate when source, artifacts, deployment or acceptance changes; retain detailed behavior/proof in its source document.
 
 ## Project and current state
 
 - This is `wassoufa/WiPiNetbooter64`, based on `cassianoperin/WiPiNetbooter64`, ultimately derived from chunksin's WiPiNetbooter. Push fork work to `origin`; do not publish to `upstream` without an explicit request.
 - The inspected installation runs `wipi 0.22-0` on Debian 13 arm64. The public upstream is an older source snapshot, not an exact representation of the installed package. Compare relevant installed files before preparing any deployment; never replace the entire installation from this checkout.
 - The development cabinet uses Naomi 1 with physical JVS controls. Preserve support for the other systems and optional control/card integrations already present in the project.
-- The OSM-save correction and ordinary-upload guard have passed cabinet tests. The first loading-status enhancement is implemented in [PR #1](https://github.com/wassoufa/WiPiNetbooter64/pull/1), with offline checks passing; it has not been deployed or accepted on hardware. Source merge and hardware acceptance are separate. Recheck current Git/PR state and deployment records before relying on this snapshot.
-- Follow the README roadmap: finish loading-status acceptance before adding the proposed phone launcher, search/filter improvements, bulk list management or artwork changes. Candidates from other forks are references for selective adaptation, not approved wholesale replacements.
+- The [AI handoff](docs/ai-handoff.md) owns current PR/source/artifact and acceptance status. Source merge, local proof, emulator evidence and cabinet acceptance are separate; recheck Git/PR/deployment records before relying on a dated snapshot.
+- Follow the [roadmap gates](docs/roadmap.md). Native emulator preparation and separate phone-status acceptance can progress independently; both relevant baselines precede the artwork proof. Later phone launcher/search/bulk-list changes remain proposals. Other forks are selective references, not approved wholesale replacements.
 
 ## Live-system boundaries
 
 - Repository work does not authorize Pi changes. Prepare the concrete diff, backup/rollback procedure and test plan, then obtain approval for additional live changes unless the current session already explicitly authorizes them.
 - Do not upgrade the OS or WiPi, alter networking/SSH, reboot/shut down, delete games or change cabinet power without explicit authorization. Coordinate any startup test with the user.
 - Before an approved deployment, confirm no transfer or configuration edit is active. Back up affected files and their owners/modes, verify the archive and installed source hashes, and deploy only the reviewed files. Install new helpers before their callers and roll back the related files together. See the deployment section in `docs/loading-status.md`.
-- Keep credentials, private addresses, cabinet CSV/settings, captured logs and ROMs out of commits. Existing repository defaults are not proof of current cabinet settings. Obtain access details through the authorized session rather than storing them here.
+- Keep credentials, private addresses, cabinet CSV/settings, captured logs and ROMs out of commits. Store raw runtime evidence outside the checkout or under ignored `native/out/runtime-tests/`; publish reviewed/redacted summaries only. Existing repository defaults are not proof of current cabinet settings. Obtain access details through the authorized session rather than storing them here.
 - Never use a live transfer to test forced failure or interruption. Use isolated fixtures. Do not trigger a game launch merely to inspect a page.
 
 ## Code map and ownership
@@ -63,7 +63,7 @@ docker run --rm --network none -v "$PWD:/app:ro" -w /app php:8.4-cli-alpine php 
 git diff --check
 ```
 
-For changed PHP files, also run `php -l` inside the PHP container. Loading changes need coverage of duplicate suppression, per-target independence, later launches, sender failure, stale completion, live 0% waits and read-only polling. Configuration serialization changes need the eight-field OSM regression check. Documentation-only changes need link/path and diff checks, not another hardware test.
+For changed PHP files, also run `php -l` inside the PHP container. Loading changes need coverage of duplicate suppression, per-target independence, later launches, sender failure, stale completion, live 0% waits and read-only polling. Configuration serialization changes need the eight-field OSM regression check. Documentation-only changes need link/path, anchor and diff checks, not another hardware test. For runtime work, use the diagnostic readiness/capture gates in `docs/native-runtime-test-plan.md`; record unavailable metrics rather than guessing. Preserve logs before another invocation overwrites them, and keep ROM/config hashes with the matching debug ELF. Pi RSS is not Naomi heap/texture memory evidence.
 
 After approved deployment, use the acceptance checklist in `docs/loading-status.md`. Report offline results separately from hardware observations and state what remains unverified. Update the README and deployment notes when acceptance or rollback occurs.
 

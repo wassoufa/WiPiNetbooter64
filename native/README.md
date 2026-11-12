@@ -2,6 +2,8 @@
 
 This is an experimental, rebuildable source baseline for the Naomi on-screen menu. It is the prerequisite for adding artwork, not the artwork implementation. Nothing here changes the runtime launcher or replaces `sbin/piforce/dm_netboot/homebrew/netbootmenu/netbootmenu.bin` (including its dark/light variants).
 
+Current source/artifact identity and acceptance state live in [the AI handoff](../docs/ai-handoff.md). Follow [the ordered gates](../docs/roadmap.md), [emulator/Naomi diagnostic plan](../docs/native-runtime-test-plan.md) and [result template](../docs/templates/runtime-test-result.md) when resuming runtime work. The bare build ROM needs a separately hashed synthetic configuration section before isolated emulator use; no offline fixture generator/message bridge is supplied yet.
+
 ## Source and changes
 
 The renderer and original assets come from [hmofet/netboot at 6ccbfdd](https://github.com/hmofet/netboot/tree/6ccbfdd000e705678ee422ebe972c2fccce40693/homebrew/netbootmenu). `netbootmenu/upstream.json` records the original file hashes. Preserve the Unlicense and bundled font notices in `netbootmenu/LICENSE` and `netbootmenu/FONT-LICENSE.txt`.
@@ -54,9 +56,9 @@ Allocation counters measure only the exercised ownership paths. The settings tes
 
 ## Before any hardware comparison
 
-Keep this baseline as a draft until an isolated runtime comparison is planned. Verify the installed host and menu files, preserve all existing menu binaries, settings and SRAM saves, and obtain approval for a concrete backed-up test. Do not overwrite a working binary just because compilation succeeded. Rollback means restoring the original selected menu binary and associated host files together if those were changed; this branch does not change those host files.
+Keep this baseline as a draft until an isolated runtime comparison is planned. Verify the installed host and menu files, preserve all existing menu binaries, settings and SRAM saves, and obtain approval for a concrete backed-up test. Do not overwrite a working binary just because compilation succeeded. Rollback means restoring the original selected menu binary and associated host files together if those were changed; the native menu work does not change the sender/menu-host scripts or installed launcher selection. PR #2 also contains an `upload_status.py` initialization-failure cleanup fix beyond the merged PR #1 baseline; include it in any separately scoped phone deployment review, not an unrecorded native comparison.
 
-Pending checks: actual video/input and settings screens, SRAM backup association with the previous game, restoration before the next game, game selection/upload, menu startup timing, orientation and Single Boot. Coordinate startup tests with the user and retain the OSM/phone transfer restriction. The new phone status screen also still needs its separate hardware acceptance.
+Use the [diagnostic readiness gate and capture plan](../docs/native-runtime-test-plan.md#stage-n-approved-backed-up-naomi-comparison) before an approved comparison. Pending checks: actual video/input and settings screens, SRAM backup association with the previous game, restoration before the next game, game selection/upload, menu startup timing, orientation and Single Boot. Coordinate startup tests with the user and retain the OSM/phone transfer restriction. The new phone status screen also still needs its separate hardware acceptance.
 
 Once baseline behavior is established, add artwork as a separate five-game proof with bounded payload parsing, missing-image fallback and measured memory/startup cost. See the [illustrated-menu investigation](../docs/illustrated-osm-investigation.md).
 

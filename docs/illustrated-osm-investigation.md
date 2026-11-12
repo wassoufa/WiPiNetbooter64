@@ -83,11 +83,8 @@ This check does not authorize installing codecs, changing Pi video wiring, repla
 
 ## Staged investigation and acceptance
 
-1. Source recovery, layout/SRAM adaptation, local C tests and native cross-build are complete for a candidate text baseline, not an exact copy of the installed version. Establish runtime behavior before modifying the interface. Do not treat binary patching or an installed-system toolchain upgrade as approved.
-2. Review the supplied CRT-proportioned browser layout preview, including long titles and missing artwork. A small grid can be compared later if desired. Preserve video wiring; no Pi kiosk is needed for this route.
-3. Build an isolated five-game proof with artwork embedded in the menu payload, prepared on the host. Preserve sender behavior and game IDs. Include bounds/version checks for new data and retain the original menu for rollback. Test missing/invalid artwork, memory limits and selection-to-game mapping.
-4. Check rendering and controls in a suitable Naomi emulator where supported, then prepare a backed-up cabinet comparison for approval. Emulator success does not establish physical JVS, CRT or NetDIMM behavior.
-5. On approved hardware testing, check startup time, browsing responsiveness, title readability, correct game launch, settings and Single Boot/OSM behavior. Expand the catalog only after the proof passes. Coordinate this after acceptance of the current loading-status enhancement.
-6. After baseline acceptance, apply the game-details/video checks above as a separate feasibility experiment. Keep the still-image path usable regardless of the video result.
+Follow [the maintained roadmap gates](roadmap.md) for the current work order and [the AI handoff](ai-handoff.md) for source/artifact proof and unknowns. The next native step is isolated emulator readiness, including a synthetic configuration fixture and a supported message bridge where protocol checks require one, followed by baseline runtime checks and an approved backed-up Naomi comparison. Phone loading-status acceptance is a separate track. Both relevant baselines precede the five-game still-artwork proof; details/video is a later measured experiment.
+
+Use [the runtime diagnostic/test plan](native-runtime-test-plan.md) and [result/bug template](templates/runtime-test-result.md). Browser previews and host fixtures do not close emulator or cabinet gates. Keep this investigation as the design/provenance reference rather than a second moving status checklist.
 
 An illustrated menu does not resolve the separate [CRT signal-loss clicking investigation](crt-sync-follow-up.md); the game-start reset remains. It also does not coordinate independent OSM and phone transfers. Preserve that restriction until coordination is separately designed.
