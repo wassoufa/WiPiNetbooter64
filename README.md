@@ -5,6 +5,7 @@ This fork preserves the tested OSM default-save correction and ordinary-upload g
 - [Baseline and preserved behavior](docs/fork-baseline.md)
 - [Loading status: behavior, tests and deployment](docs/loading-status.md)
 - [Deferred CRT signal-loss clicking investigation](docs/crt-sync-follow-up.md)
+- [Agent instructions: architecture, invariants and verification](AGENTS.md)
 
 The enhancement is under review and has not been deployed to the cabinet. No personal cabinet settings, credentials, logs or ROMs are added by these changes.
 
