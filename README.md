@@ -1,3 +1,13 @@
+## Maintained fork
+
+This fork preserves the tested OSM default-save correction and ordinary-upload guard from a WiPi64 installation. The first enhancement adds asynchronous loading status, busy handling and failure reporting while retaining the existing transfer tools and Single Boot behavior.
+
+- [Baseline and preserved behavior](docs/fork-baseline.md)
+- [Loading status: behavior, tests and deployment](docs/loading-status.md)
+- [Deferred CRT signal-loss clicking investigation](docs/crt-sync-follow-up.md)
+
+The enhancement is under review and has not been deployed to the cabinet. No personal cabinet settings, credentials, logs or ROMs are added by these changes.
+
 # WiPiNetbooter64
 
 Port of chunksin's WiPiNetbooter to run into an updated Debian Trixie 64 bits linux.

@@ -15,5 +15,5 @@ When revisited:
 No settings or code changes have been made for this item.
 
 References:
-- https://www.arcade-projects.com/threads/toshiba-tri-sync-pbxx-pdxx-pexx-notes-mods.21081/
-- https://github.com/cassianoperin/WiPiNetbooter64/blob/master/sbin/piforce/dm_netboot/scripts/netdimm_send.py
+- [Toshiba chassis technical observations](https://www.arcade-projects.com/threads/toshiba-tri-sync-pbxx-pdxx-pexx-notes-mods.21081/)
+- [WiPi64 sender source](https://github.com/cassianoperin/WiPiNetbooter64/blob/master/sbin/piforce/dm_netboot/scripts/netdimm_send.py)

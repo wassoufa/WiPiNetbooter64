@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . "/upload_web.php";
 
 $filename = $_GET["rom"];
 $gamename = $_GET["name"];
@@ -7,7 +8,7 @@ $mapping = $_GET["mapping"];
 $ffb = $_GET["ffb"];
 
 function pinger($address){
-        $command = "fping -c1 -t500 $address";
+        $command = 'fping -c1 -t500 ' . escapeshellarg($address);
         exec($command, $output, $status);
         if($status === 0){
             return true;
@@ -24,14 +25,7 @@ $dimmname = $row[0];
 $ip = $row[1];
 $dimmtype = $row[2];
 
-if ($dimmtype == "Sega Naomi"){
-   $supported = array("Sega Naomi", "Sammy Atomiswave");}
-if ($dimmtype == "Sega Naomi2"){
-   $supported = array("Sega Naomi","Sega Naomi2", "Sammy Atomiswave");}
-if ($dimmtype == "Sega Chihiro"){
-   $supported = array("Sega Chihiro");}
-if ($dimmtype == "Sega Triforce"){
-   $supported = array("Sega Triforce");}
+$supported = upload_supported_systems($dimmtype);
 
 if (in_array($system, $supported)){
    if (pinger($row[1]) == true){
@@ -43,14 +37,11 @@ if (in_array($system, $supported)){
 
 $count = count($onlinedimms);
 
-if(strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false){
-    $loadpage = 'load.php';
-} else { 
-    $loadpage = 'loadnochrome.php';
-}
+$loadpage = 'load.php';
 
 if ($count == 1){
-    header ("Location: $loadpage?rom=$filename&name=$gamename&dimm=$onlydimm&mapping=$mapping&ffb=$ffb");
+    header('Location: load.php?' . http_build_query(['rom' => $filename, 'dimm' => $onlydimm], '', '&', PHP_QUERY_RFC3986), true, 303);
+    exit;
 }
 
 include 'menu.php';
