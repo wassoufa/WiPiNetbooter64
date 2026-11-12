@@ -41,6 +41,8 @@ The fork review identified the following candidates. Only the first enhancement 
 
 Additional work: [game artwork in the default arcade menu](docs/illustrated-osm-investigation.md), with joystick selection and a large image/title preview inspired by the phone interface. The [native text-menu baseline](native/README.md) now builds locally with WiPi's configuration layout and guarded SRAM exchange; focused C/host-protocol tests pass. It remains experimental and has not replaced the installed menu. An [offline interactive layout preview](docs/previews/illustrated-osm.html) is also available. Native artwork and emulator/cabinet acceptance remain pending.
 
+After baseline acceptance, [check a game-details view with video and information below it](docs/illustrated-osm-investigation.md#post-baseline-check-game-details-video-and-crt-experience), using the phone view as a reference. Evaluate CRT readability, joystick/Back/quick-launch behavior, metadata reuse and measured startup/input/memory cost. Native video is unproven; retain artwork/details if it adds noticeable delay.
+
 Sources for selective adaptation include [WiPiNetbooter-NG](https://github.com/metisnc/WiPiNetbooter-NG/tree/23412c084e5fc19d920308f4a2d1566c59181ce2), [thegoodguys80's interface work](https://github.com/thegoodguys80/WiPiNetbooter/tree/38fb4d42cadbde53ddb2d9c4639a84c6b6fafa13) and [AyanamiRei1's artwork/catalog changes](https://github.com/AyanamiRei1/WiPiNetbooter/tree/03282df71e0cf12a1361cbdc748f7b2f12008c77). Their alternative backends, configuration writers and full images need separate compatibility review before adoption. A phone-only launcher does not require a kiosk/display installer or an OS upgrade.
 
 ### Deferred CRT investigation

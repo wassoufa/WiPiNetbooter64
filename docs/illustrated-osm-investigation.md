@@ -56,6 +56,31 @@ Start with a readable game list plus one large artwork/title panel for the highl
 
 A small card grid is an alternative for a later mock-up; the phone's long portrait layout may not be readable unchanged. Filters, animation and video previews are separate proposals. Keep a text-menu fallback and preserve enabled-game/orientation selection, custom entries, settings/SRAM behavior, Single Boot and the existing transfer lifecycle. Browsing must not reboot Naomi or start a game upload on every selection change.
 
+## Post-baseline check: game details, video and CRT experience
+
+The user also requests a selected-game view inspired by the phone's Border Down screen: title, clear launch action, video preview and information below it. Record this as a feasibility/experience check **after the native baseline is accepted**, not part of the current baseline implementation. No native video playback or performance claim has been demonstrated.
+
+The information already exists in the web catalog path. `var/www/html/gamelist.php` reads `romsinfo.csv` indices 0 (system), 3 (video filename), 4 (title), 6 (manufacturer), 7 (year), 8 (genre), 10 (orientation) and 11 (controls). It displays the clip through a browser `<video>` element using an MP4 file under `/videos/`. Reuse that canonical metadata rather than maintaining another catalog. The native payload currently carries none of these details beyond the title/serial/index; it needs a bounded, compatible extension before the native menu can display them.
+
+The phone's browser performs video decoding. The native baseline has text/sprite rendering and no movie playback path, so copying an MP4 filename does not provide playback. Possible approaches to evaluate include a short preconverted frame sequence or a supported native decoder. Neither approach is selected yet. Preconversion on the host can avoid runtime transcoding, but frames consume storage, memory and transfer bandwidth; compression trades some of that for decoding work. More embedded media also increases the menu upload payload. Do not promise zero startup cost or unchanged responsiveness without measurements.
+
+### CRT and control checks
+
+- Design for the native 640x480, 4:3 view, with safe margins for the actual CRT's overscan. Keep the game title, preview and compact information below it readable at normal cabinet viewing distance. Use large text, clear contrast, visible selection/focus and wrapping for long titles/values; avoid shrinking a phone table to fit.
+- Preserve the preview's aspect ratio, including vertical games within the landscape display. Keep video timing/output at the configured 31 kHz mode: opening, changing or closing a preview must not cause a reset, blanking or sync reacquisition.
+- Make details and Back navigable with the physical joystick/buttons, retain the list position when returning, and keep quick game launch available. Choose the details control after reviewing the existing short-Start launch and long-Start settings mapping; do not silently replace those actions or require touch input.
+- Show the title/information and a still image immediately. Evaluate a muted preview only once selection settles or details are opened, rather than decoding clips while rapidly scrolling. Launch and Back must respond immediately and stop media work; video must never become a mandatory wait before launching.
+- Missing, unsupported or corrupt media must fall back to artwork/title and usable launch controls. Metadata must remain available independently of video; clip failure must not trigger another transfer or block selection.
+
+### Performance experiment and acceptance record
+
+1. Record the accepted text/artwork baseline first: menu payload bytes and upload/startup time, navigation/input response, frame timing, and RAM/texture memory use. Compare the same catalog and launch path on the same cabinet, keeping Single Boot and reset behavior fixed.
+2. Add information below a still preview first and measure its cost. Then try one small muted local clip. An initial test could use roughly 320x240 at 10–15 fps for 5–10 seconds; those are experiment parameters, not a promised supported format or final quality target. Establish a memory/payload budget before choosing frame sequences versus a decoder, and do not preload the full video library into RAM/VRAM.
+3. Test rapid selection changes, entering/exiting details, repeated preview loops and Launch during playback. Measure dropped frames, frame-time spikes, input delay, peak/leaked memory, menu upload/startup cost and game-launch timing. Also check long/missing metadata, absent/corrupt clips, vertical content and CRT edge/text readability.
+4. Record the before/after figures and user-observed responsiveness. Only adopt video if startup, browsing and launching meet an explicitly reviewed performance budget and the CRT view is readable. If video adds a noticeable wait or compromises controls, retain the still-image/details view and leave video deferred; the phone can keep its existing video view.
+
+This check does not authorize installing codecs, changing Pi video wiring, replacing the menu or collecting/copying cabinet media. Scope any implementation after baseline acceptance, with fixtures first and an approved, backed-up hardware comparison.
+
 ## Staged investigation and acceptance
 
 1. Source recovery, layout/SRAM adaptation, local C tests and native cross-build are complete for a candidate text baseline, not an exact copy of the installed version. Establish runtime behavior before modifying the interface. Do not treat binary patching or an installed-system toolchain upgrade as approved.
@@ -63,5 +88,6 @@ A small card grid is an alternative for a later mock-up; the phone's long portra
 3. Build an isolated five-game proof with artwork embedded in the menu payload, prepared on the host. Preserve sender behavior and game IDs. Include bounds/version checks for new data and retain the original menu for rollback. Test missing/invalid artwork, memory limits and selection-to-game mapping.
 4. Check rendering and controls in a suitable Naomi emulator where supported, then prepare a backed-up cabinet comparison for approval. Emulator success does not establish physical JVS, CRT or NetDIMM behavior.
 5. On approved hardware testing, check startup time, browsing responsiveness, title readability, correct game launch, settings and Single Boot/OSM behavior. Expand the catalog only after the proof passes. Coordinate this after acceptance of the current loading-status enhancement.
+6. After baseline acceptance, apply the game-details/video checks above as a separate feasibility experiment. Keep the still-image path usable regardless of the video result.
 
 An illustrated menu does not resolve the separate [CRT signal-loss clicking investigation](crt-sync-follow-up.md); the game-start reset remains. It also does not coordinate independent OSM and phone transfers. Preserve that restriction until coordination is separately designed.
