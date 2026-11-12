@@ -33,6 +33,7 @@ These instructions apply throughout the repository. Read the [README](README.md)
 | `sbin/piforce/dm_netboot/netdimm/netdimm.py` | NetDIMM protocol and legacy per-target transfer progress. |
 | `sbin/piforce/singleboot.py`, `sbin/piforce/menulauncher.py` | Startup/default selection and on-screen menu (OSM) integration. |
 | `var/www/html/updatedimms.php` | NetDIMM CSV persistence, including the repaired OSM default serialization. |
+| `native/netbootmenu/` | Experimental text-menu source; not selected by the installed launcher. Protocol layout in `protocol.h`, SRAM exchange in `sram.c`, rendering/control flow in `screens.c`. |
 
 ## Behavior to preserve
 
@@ -66,6 +67,6 @@ After approved deployment, use the acceptance checklist in `docs/loading-status.
 
 ## Deferred investigations
 
-The [illustrated OSM investigation](docs/illustrated-osm-investigation.md) is a separate roadmap candidate: native artwork plus joystick selection, not a web-page change. Candidate renderer source is pinned at hmofet/netboot `6ccbfdd000e705678ee422ebe972c2fccce40693`; it lacks WiPi's SRAM configuration word/handlers. Follow the documented offset comparison before attempting a native rebuild. Source has not been vendored into this checkout. A browser-only layout preview exists; no native prototype or cabinet acceptance exists.
+The [illustrated OSM investigation](docs/illustrated-osm-investigation.md) is a separate roadmap candidate: native artwork plus joystick selection, not a web-page change. The [native baseline](native/README.md) vendors renderer source from hmofet/netboot `6ccbfdd000e705678ee422ebe972c2fccce40693`, adds WiPi's SRAM configuration/exchange and compiles locally. Run `python3 -B tests/test_native_menu.py` for changes to its wire/SRAM code and `sh native/build.sh` for native changes. Keep the shipped runtime binaries intact; local build success is not emulator/cabinet acceptance. Artifacts under `native/out/` and build caches are ignored. No native artwork has been implemented yet. Preserve source/asset provenance and font notices.
 
 See [CRT follow-up](docs/crt-sync-follow-up.md). The Toshiba PD2367 is already at 31 kHz; clicks accompany signal loss/return during Naomi reset. Sync reacquisition is a working explanation, not a diagnosis of chassis damage. `--disable-now-loading` is a candidate for a controlled comparison; the final reboot remains. Do not change reset timing as part of unrelated features, bypass protection/relays or modify the chassis to suppress clicking.

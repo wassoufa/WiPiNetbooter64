@@ -1,0 +1,6 @@
+arcadeutils==0.1.11
+dragoncurses==0.2.1
+naomiutils==0.5.4
+netdimmutils==0.5.4
+pycryptodome==3.24.1
+typing-extensions==4.13.2

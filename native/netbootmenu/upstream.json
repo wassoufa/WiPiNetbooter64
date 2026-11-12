@@ -1,0 +1,24 @@
+{
+  "repository": "https://github.com/hmofet/netboot",
+  "commit": "6ccbfdd000e705678ee422ebe972c2fccce40693",
+  "directory": "homebrew/netbootmenu",
+  "original_sha256": {
+    "Makefile": "8267b5c599d805c1a65b84586840a3843f5d15e3e1d71ea87c849c06c83302e0",
+    "change.raw": "2a54614bc06a7b31cfa0cebfe3411f5952a8762cb0e05f722d3cd879d912b85f",
+    "check.raw": "265992e00ab68d940f11bfd393a770f0b8f0fe2d441edb7c816a0e502ca65219",
+    "common.h": "57e2434d21aca290a9eb9f2cb148a384ed1355c6f9c6e9217a14f4dfb421bf88",
+    "config.c": "3131c6048db5e4103be3192677ef159403fb2fe8b53f20e3c6c20c1f433e809f",
+    "config.h": "e085f74a510f2d61f09216a13a5dc7eff7549ebc7ad9eb8db328389f46050ae0",
+    "controls.c": "ebe22f91ddbed3e8f3148d7f02576e42f0c207e3edf8fa5600577198e39f798f",
+    "controls.h": "8f95046fce93e757834a6ff9c199564d7ec822aa1341b1c1c8cd03707354b56d",
+    "cursor.png": "b17e1afedf77b02fd7adfa7c7ef848c2dca6dbb75fb12586d67c64593822fe4e",
+    "dejavusans.ttf": "7da195a74c55bef988d0d48f9508bd5d849425c1770dba5d7bfc6ce9ed848954",
+    "dn.png": "3a6ea66d3046f7affa202a4045660e72ea71d9cdba9a4515b0ed53c9660a72d9",
+    "main.c": "dfa7de428d3fcef5293d51d095d0773138117dc696c6acf66f8938959329f602",
+    "screens.c": "f282b453d92571cff7ffd8257823143f5351e57e39ef749700e28a924f15b135",
+    "screens.h": "e27a5adbf23280ba7346aac9d7b24b6dd4ef4269917d49ff3b99031d717a6bdc",
+    "scroll.raw": "415aea47db1c72bb2c6dd7847e81ee0aa9619855e332833d54fbd38e83ea7e44",
+    "up.png": "d0e36bce2338acf3e99fcf86e5dce3430b312894de897c7b0bca28ca9864d8fc"
+  },
+  "license": "Unlicense; see LICENSE and FONT-LICENSE.txt"
+}

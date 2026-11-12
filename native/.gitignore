@@ -1,0 +1,4 @@
+build-env/.cache/
+netbootmenu/build/
+netbootmenu/netbootmenu.bin
+out/
