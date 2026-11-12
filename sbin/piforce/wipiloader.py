@@ -1,4 +1,6 @@
 import os, collections, signal, sys, subprocess, socket, logging
+import fcntl
+import hashlib
 import psutil
 import RPi.GPIO as GPIO
 import glob
@@ -23,6 +25,22 @@ def exists(path):
         return False
     return True
 
+activedimm = sys.argv[2]
+with open('/sbin/piforce/servermode.txt') as srvfile:
+    srvmode = srvfile.readline()
+
+# Server Mode manages its own persistent sender and replacement lifecycle.
+if srvmode != 'serveron':
+    os.makedirs('/run/wipi', mode=0o755, exist_ok=True)
+    uploadlockpath = '/run/wipi/upload-' + hashlib.sha256(activedimm.encode('utf-8')).hexdigest() + '.lock'
+    uploadlock = open(uploadlockpath, 'a')
+    try:
+        fcntl.flock(uploadlock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        logging.basicConfig(filename="/var/log/wipiloader.log", format='%(asctime)s %(message)s', filemode='a', level=logging.WARNING)
+        logging.warning("Launch ignored: upload already in progress for %s", activedimm)
+        sys.exit(0)
+
 logging.basicConfig(filename="/var/log/wipiloader.log", format='%(asctime)s %(message)s', filemode='w')
 logger=logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -37,13 +55,9 @@ with open('/sbin/piforce/emumode.txt') as emufile:
     emumode = emufile.readline()
 with open('/sbin/piforce/hatserial.txt') as hatfile:
     hatserial = hatfile.readline()
-with open('/sbin/piforce/servermode.txt') as srvfile:
-    srvmode = srvfile.readline()
 
 with open('/sbin/piforce/rpiversion.txt') as rpiversionfile:
     rpiversion = rpiversionfile.readline()
-
-activedimm = sys.argv[2]
 
 print("Wipiloader script started")
 print("OpenJVS mode is", openjvs)
@@ -68,7 +82,7 @@ if (openjvs == 'openon'):
 if (ffbmode == 'ffbon'):
     ffbCommand1 = 'sudo killall -9 openffb > /var/log/openffb/openffb.log 2>&1'
     os.system(ffbCommand1)
-    sleep(3);
+    sleep(5);
     print("Starting OpenFFB with mapping file", sys.argv[6])
     ffbCommand2 = 'sudo openffb -h=0 -gp='+sys.argv[6]+' >> /var/log/openffb/openffb.log 2>&1 &'
     os.system(ffbCommand2)
