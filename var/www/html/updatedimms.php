@@ -27,6 +27,7 @@ $cab = $_GET["cab"];
 $servermode = file_get_contents('/sbin/piforce/servermode.txt');
 
 if ($defaultgame == "none"){$defaultgame = "none,none,none";}
+elseif ($defaultgame == "menu"){$defaultgame = "menu,none,none";}
 
 if ($opentarget == '')
 {$opentarget = 'off';}

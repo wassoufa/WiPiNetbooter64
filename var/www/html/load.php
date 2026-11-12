@@ -1,88 +1,36 @@
 <?php
+require_once __DIR__ . '/upload_web.php';
 
-set_time_limit(0);
-
-include 'menu.php';
-echo '<html lang="en"><head><meta charset="utf-8"><title>WiPi Netbooter</title>';
-echo '<link rel="stylesheet" href="css/sidebarstyles.css">';
-
-function gzfilesize($filename) {
-  $gzfs = FALSE;
-  if(($zp = fopen($filename, 'r'))!==FALSE) {
-    if(@fread($zp, 2) == "\x1F\x8B") { // this is a gzip'd file
-      fseek($zp, -4, SEEK_END);
-      if(strlen($datum = @fread($zp, 4))==4)
-        extract(unpack('Vgzfs', $datum));
+try {
+    $target = upload_target($_GET['dimm'] ?? '');
+    $game = upload_game($_GET['rom'] ?? '');
+    if (!$game['enabled'] || !is_file('/boot/roms/' . $game['rom'])) {
+        throw new InvalidArgumentException('The selected game is disabled or its ROM file is missing.');
     }
-    else // not a gzip'd file, revert to regular filesize function
-      $gzfs = filesize($filename);
-    fclose($zp);
-  }
-  return($gzfs);
-}
-
-$relaymode = file_get_contents('/sbin/piforce/relaymode.txt');
-$zeromode = file_get_contents('/sbin/piforce/zeromode.txt');
-$openmode = file_get_contents('/sbin/piforce/openmode.txt');
-$ffbmode = file_get_contents('/sbin/piforce/ffbmode.txt');
-$rom = $_GET["rom"];
-$rompath = '/boot/roms/'.$rom;
-$name = $_GET["name"];
-$dimm = $_GET["dimm"];
-$mapping = $_GET["mapping"];
-$ffb = $_GET["ffb"];
-$filesize = gzfilesize($rompath);
-ini_set('output_buffering', false);
-$last = 0;
-
-echo '<p>';
-
-?>
-
-<section><center>
-
-<?php
-echo '<h1>Loading<br>'.$name.'</h1></center>';
-?>
-
-<div id="myProgress">
-  <div id="myBar">0%</div>
-</div>
-
-<?php
-
-$command = escapeshellcmd('sudo python3 /sbin/piforce/wipiloader.py '.$rom.' '.$dimm.' '.$relaymode.' '.$zeromode.' '.$mapping.' '.$ffb);
-$output = shell_exec($command . '> /dev/null 2>/dev/null &');
-$progressfile = '/var/log/progress_'.$dimm;
-
-$progress = 0;
-while($progress < 100) {
-    $handle = popen('sudo tail -n 1 '.$progressfile, 'r');
-    $progress = fgets($handle);
-    if(($progress > $last && $progress < 100) || $progress == 10){
-         echo '<script>';
-         echo 'var elem = document.getElementById("myBar");';
-         echo 'elem.style.width = '.$progress.' + "%";';
-         echo 'elem.innerHTML = '.$progress.'  + "%";';
-         echo '</script>';
+    if (!in_array($game['system'], upload_supported_systems($target['type']), true)) {
+        throw new InvalidArgumentException('The selected game is not compatible with this NetDIMM.');
     }
-    $last = $progress;
-    ob_flush(); 
-    flush();
-    sleep(0.3);
-    pclose($handle);
+    if (trim(file_get_contents('/sbin/piforce/servermode.txt')) === 'serveron') {
+        throw new InvalidArgumentException('Server Mode is active. Change its default game in Manage NetDIMMs.');
+    }
+    $existing = upload_status($target['ip']);
+    $busy = in_array($existing['state'], ['preparing', 'uploading', 'starting'], true);
+    $since = $busy ? 0 : microtime(true);
+    if (!$busy) {
+        $args = [$game['rom'], $target['ip'],
+            trim(file_get_contents('/sbin/piforce/relaymode.txt')),
+            trim(file_get_contents('/sbin/piforce/zeromode.txt')), $game['mapping'], $game['ffb']];
+        $command = 'sudo python3 /sbin/piforce/wipiloader.py ' . implode(' ', array_map('escapeshellarg', $args));
+        exec($command . ' > /dev/null 2>&1 &');
+    }
+    header('Cache-Control: no-store');
+    header('Location: loadprogress.php?' . http_build_query([
+        'dimm' => $target['ip'], 'since' => sprintf('%.6F', $since), 'follow' => $busy ? '1' : '0'
+    ], '', '&', PHP_QUERY_RFC3986), true, 303);
+    exit;
+} catch (InvalidArgumentException $error) {
+    upload_error_page($error->getMessage());
+} catch (Exception $error) {
+    error_log('WiPi launch request failed: ' . $error->getMessage());
+    upload_error_page('WiPi could not start the loader. Check the web error log.', 500);
 }
-
-echo '<script>';
-echo 'var elem = document.getElementById("myBar");';
-echo 'elem.style.width = 100 + "%";';
-echo 'elem.innerHTML = 100  + "%";';
-echo '</script>';
-echo '<br><center><a href="gamelist.php?display=all#anchor'.$name.'">LOADING COMPLETE</a></center>';
-?>
-
-<script type="text/javascript">
-<?php
-echo 'setTimeout(function(){window.location="gamelist.php?display=all#anchor'.$name.'";}, 2000)';
-?>
-</script>
