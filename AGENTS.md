@@ -1,3 +1,5 @@
+Start with the [AI handoff](https://github.com/wassoufa/WiPiNetbooter64/blob/codex/native-menu-baseline/docs/ai-handoff.md) and [ordered roadmap](https://github.com/wassoufa/WiPiNetbooter64/blob/codex/native-menu-baseline/docs/roadmap.md). Native baseline work lives on `codex/native-menu-baseline` in [draft PR #2](https://github.com/wassoufa/WiPiNetbooter64/pull/2); emulator and Naomi acceptance are pending. Follow that handoff and verify current source, PR and deployment status before resuming.
+
 # Working on this fork
 
 These instructions apply throughout the repository. Read the [README](README.md), [baseline](docs/fork-baseline.md) and [loading-status notes](docs/loading-status.md) before changing the loading or configuration paths. Keep these documents accurate when behavior or deployment status changes.
