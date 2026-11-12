@@ -404,6 +404,7 @@ game_options_t *parse_game_options(uint8_t *data, unsigned int length)
                     free(parsed_options->patches);
                 }
                 free(parsed_options);
+                return 0;
             }
         }
     }
@@ -411,6 +412,10 @@ game_options_t *parse_game_options(uint8_t *data, unsigned int length)
     if (length < (expected_length + 1))
     {
         printf("Not enough data for game settings count!\n");
+        for (unsigned int fs = 0; fs < parsed_options->system_settings_count; fs++)
+        {
+            free_setting(&parsed_options->system_settings[fs]);
+        }
         if (parsed_options->system_settings)
         {
             free(parsed_options->system_settings);
@@ -457,6 +462,7 @@ game_options_t *parse_game_options(uint8_t *data, unsigned int length)
                     free(parsed_options->patches);
                 }
                 free(parsed_options);
+                return 0;
             }
         }
     }
@@ -950,14 +956,18 @@ unsigned int game_settings_load(state_t *state, int reinit)
                     new_screen = SCREEN_COMM_ERROR;
                     printf("Failed to parse game settings!\n");
                 }
-                if (game_options->selected_game != selected_game)
+                else if (game_options->selected_game != selected_game)
                 {
                     // Uh oh, failed to parse data.
                     new_screen = SCREEN_COMM_ERROR;
                     printf("Wrong game settings returned!\n");
+                    free_game_options(game_options);
+                    game_options = 0;
                 }
-
-                new_screen = SCREEN_GAME_SETTINGS;
+                else
+                {
+                    new_screen = SCREEN_GAME_SETTINGS;
+                }
             }
             else if (type == MESSAGE_LOAD_PROGRESS && length == 8)
             {
@@ -983,7 +993,7 @@ unsigned int game_settings_load(state_t *state, int reinit)
             }
         }
 
-        if ((!ack_received) && ((state->animation_counter - load_start) >= MAX_WAIT_FOR_COMMS))
+        if (new_screen == SCREEN_GAME_SETTINGS_LOAD && (!ack_received) && ((state->animation_counter - load_start) >= MAX_WAIT_FOR_COMMS))
         {
             // Uh oh, no ack.
             new_screen = SCREEN_COMM_ERROR;

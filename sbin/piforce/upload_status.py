@@ -33,24 +33,23 @@ class UploadStatus:
         prefix = os.path.join(RUNTIME_DIR, 'upload-' + hashlib.sha256(target.encode('utf-8')).hexdigest())
         self.lock = open(prefix + '.lock', 'a')
         try:
-            fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            self.lock.close()
-            raise UploadBusy()
-        self.path = prefix + '.json'
-        progress_path = '/var/log/progress_' + target
-        baseline_hash = file_hash(progress_path)
-        try:
-            baseline_mtime = int(os.stat(progress_path).st_mtime)
-        except FileNotFoundError:
-            baseline_mtime = None
-        self.state = {
-            'version': 1, 'id': uuid.uuid4().hex, 'target': target, 'rom': rom,
-            'pid': os.getpid(), 'process_start': process_start(os.getpid()),
-            'started': time.time(), 'state': 'active',
-            'progress_baseline': baseline_hash, 'progress_baseline_mtime': baseline_mtime,
-        }
-        try:
+            try:
+                fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                raise UploadBusy()
+            self.path = prefix + '.json'
+            progress_path = '/var/log/progress_' + target
+            baseline_hash = file_hash(progress_path)
+            try:
+                baseline_mtime = int(os.stat(progress_path).st_mtime)
+            except FileNotFoundError:
+                baseline_mtime = None
+            self.state = {
+                'version': 1, 'id': uuid.uuid4().hex, 'target': target, 'rom': rom,
+                'pid': os.getpid(), 'process_start': process_start(os.getpid()),
+                'started': time.time(), 'state': 'active',
+                'progress_baseline': baseline_hash, 'progress_baseline_mtime': baseline_mtime,
+            }
             self.save()
         except BaseException:
             self.lock.close()

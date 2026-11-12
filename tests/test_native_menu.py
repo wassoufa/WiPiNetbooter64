@@ -1,6 +1,8 @@
-"""Native menu wire/SRAM proof; compiles actual C code without hardware access."""
+"""Native menu wire/SRAM/settings proof without hardware access."""
 import ast
+import os
 from pathlib import Path
+import shlex
 import shutil
 import struct
 import subprocess
@@ -16,16 +18,41 @@ class NativeMenuTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         cls.binary = Path(cls.temp.name) / 'native-menu-test'
+        cls.settings_binary = Path(cls.temp.name) / 'native-settings-test'
         compiler = shutil.which('cc')
         if not compiler:
             raise RuntimeError('A host C compiler is required; run in the native builder container.')
+        flags = [compiler, '-std=c11', '-Wall', '-Wextra', '-Werror',
+                 *shlex.split(os.environ.get('NATIVE_TEST_CFLAGS', ''))]
+        includes = ['-I' + str(ROOT / 'tests/fixtures/native_include'),
+                    '-I' + str(ROOT / 'native/netbootmenu')]
         subprocess.run([
-            compiler, '-std=c11', '-Wall', '-Wextra', '-Werror',
-            '-I' + str(ROOT / 'tests/fixtures/native_include'),
-            '-I' + str(ROOT / 'native/netbootmenu'),
+            *flags,
+            '-Dmalloc=native_test_malloc', '-Dfree=native_test_free',
+            *includes,
             str(ROOT / 'tests/fixtures/native_menu_test.c'),
             str(ROOT / 'native/netbootmenu/config.c'),
             str(ROOT / 'native/netbootmenu/sram.c'), '-o', str(cls.binary),
+        ], check=True)
+
+        # Compile exact production regions with fake UI/message dependencies.
+        # No copied parser or alternate implementation is maintained here.
+        source_path = ROOT / 'native/netbootmenu/screens.c'
+        source = source_path.read_text()
+        regions = [('#define READ_ONLY_ALWAYS', 'void send_game_options('),
+                   ('#define SCREEN_MAIN_MENU', '#define ERROR_BOX_WIDTH'),
+                   ('unsigned int game_settings_load(', 'unsigned int game_settings(')]
+        extracted = []
+        for start, end in regions:
+            offset = source.index(start)
+            line = source.count('\n', 0, offset) + 1
+            extracted.append(f'#line {line} "{source_path}"\n' +
+                             source[offset:source.index(end, offset)])
+        (Path(cls.temp.name) / 'native_settings_source.c').write_text('\n'.join(extracted))
+        subprocess.run([
+            *flags, '-Wno-sign-compare', *includes, '-I' + cls.temp.name,
+            str(ROOT / 'tests/fixtures/native_settings_test.c'),
+            '-o', str(cls.settings_binary),
         ], check=True)
 
     @classmethod
@@ -58,7 +85,13 @@ class NativeMenuTests(unittest.TestCase):
             self.assertEqual(struct.unpack_from('<III', result.stdout, 48), (336, 4, 2))
 
     def test_sram_messages_with_fake_hardware_memory(self):
-        subprocess.run([str(self.binary), 'sram'], check=True)
+        result = subprocess.run([str(self.binary), 'sram'], capture_output=True, check=True)
+        self.assertIn(b'1000 SRAM cycles, 7000 allocations released', result.stdout)
+
+    def test_settings_parse_cleanup_and_caller_ownership(self):
+        result = subprocess.run([str(self.settings_binary)], capture_output=True, check=True)
+        self.assertIn(b'settings prefixes cleaned up; caller failure, mismatch and success ownership', result.stdout)
+        self.assertIn(b'late response without ACK', result.stdout)
 
 
 if __name__ == '__main__':

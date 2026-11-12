@@ -37,7 +37,20 @@ docker run --rm --platform linux/amd64 --network none \
 
 Artifacts are written to ignored `native/out/`: the menu ROM, debug ELF, SHA-256 checksum, source manifest, compiler/ELF details, Python package versions and local builder image ID. `check-rom.py` validates the ROM header, serial, date, entry points, file section bounds and separation from the host configuration area at `0x0D000000`.
 
-The focused tests compile actual C configuration/SRAM code with fake hardware memory and message I/O. They use the actual host serializer expression, check both SRAM flag values, snapshot bytes, successful restore, malformed/disabled restores with guard bytes, unrelated message ownership and sender error propagation. These tests do not exercise real battery SRAM, JVS, video or NetDIMM communications.
+The focused tests compile actual C configuration/SRAM code with fake hardware memory and message I/O. They use the actual host serializer expression and check both SRAM flag values. The SRAM fixture runs 1,000 cycles with 7,000 successful allocations and 7,000 matching frees. Each cycle covers snapshot bytes, allocation/send failure, successful restore, malformed/disabled restores with guard bytes and unrelated message ownership passed to the caller.
+
+The settings fixture compiles the exact parser and settings-load caller regions from `screens.c` with UI and message stubs; it does not compile or exercise the rest of the renderer. A valid settings packet includes patches, two system settings and two game settings, each with selectable values and conditional read-only dependency arrays. All 155 truncated prefixes must return failure with balanced allocations, including a missing game-settings count after complete system settings and failure in a later setting. Caller checks cover parse failure, a different selected game and successful ownership until explicit release. A valid response after the no-ACK timeout must retain settings ownership and enter the settings screen; an absent response must still time out. The Python status suite separately retains real opened lock files to verify immediate closure on initialization failures in `flock`, progress reads/stat, job identity, process identity, timestamps and saving, as well as duplicate-lock rejection. A later launch must still acquire the lock.
+
+For a Linux compiler with sanitizer runtimes installed, instrument both native fixtures with:
+
+```sh
+NATIVE_TEST_CFLAGS='-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined' \
+  ASAN_OPTIONS='detect_leaks=1:halt_on_error=1' \
+  LSAN_OPTIONS='exitcode=23' UBSAN_OPTIONS='halt_on_error=1:print_stacktrace=1' \
+  python3 -B tests/test_native_menu.py
+```
+
+Allocation counters measure only the exercised ownership paths. The settings tests do not cover allocation exhaustion or arbitrary malformed count fields. Host fixtures and sanitizers do not exercise real battery SRAM, JVS, video, fonts, NetDIMM communications or long-running menu behavior. Passing these checks does not exclude all hardware/runtime leaks; emulator and cabinet acceptance remain pending.
 
 ## Before any hardware comparison
 

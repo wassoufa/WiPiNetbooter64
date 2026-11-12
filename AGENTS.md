@@ -20,6 +20,8 @@ These instructions apply throughout the repository. Read the [README](README.md)
 
 ## Code map and ownership
 
+For resource cleanup work, the user's workflow preference is **Sol implements and edits project files; Astra reviews resource ownership, cleanup and failure behavior when available**. Keep implementation with Sol. If Astra is unavailable, report that review limit alongside the completed local checks.
+
 | Path | Responsibility |
 | --- | --- |
 | `var/www/html/loadcheck.php` | Select compatible online NetDIMMs from the game-list flow. |
