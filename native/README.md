@@ -2,7 +2,7 @@
 
 This is an experimental, rebuildable source baseline for the Naomi on-screen menu. It is the prerequisite for adding artwork, not the artwork implementation. Nothing here changes the runtime launcher or replaces `sbin/piforce/dm_netboot/homebrew/netbootmenu/netbootmenu.bin` (including its dark/light variants).
 
-Current source/artifact identity and acceptance state live in [the AI handoff](../docs/ai-handoff.md). Follow [the ordered gates](../docs/roadmap.md), [emulator/Naomi diagnostic plan](../docs/native-runtime-test-plan.md) and [result template](../docs/templates/runtime-test-result.md) when resuming runtime work. The bare build ROM needs a separately hashed synthetic configuration section before isolated emulator use; no offline fixture generator/message bridge is supplied yet.
+Current source/artifact identity and acceptance state live in [the AI handoff](../docs/ai-handoff.md). Follow [the ordered gates](../docs/roadmap.md), [emulator/Naomi diagnostic plan](../docs/native-runtime-test-plan.md) and [result template](../docs/templates/runtime-test-result.md) when resuming runtime work. The bare build ROM needs the separately hashed synthetic configuration section described below before isolated emulator use. No emulator host-message bridge is supplied.
 
 ## Source and changes
 
@@ -53,6 +53,25 @@ NATIVE_TEST_CFLAGS='-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined'
 ```
 
 Allocation counters measure only the exercised ownership paths. The settings tests do not cover allocation exhaustion or arbitrary malformed count fields. Host fixtures and sanitizers do not exercise real battery SRAM, JVS, video, fonts, NetDIMM communications or long-running menu behavior. Passing these checks does not exclude all hardware/runtime leaks; emulator and cabinet acceptance remain pending.
+
+## Offline emulator fixture
+
+With the existing builder image and pinned base ROM available, run these commands from the repository root. They use no network, sender, cabinet catalog or live host entry point. Only the ignored build-output mount is writable during generation.
+
+```sh
+docker run --rm --platform linux/amd64 --network none --read-only \
+  -v "$PWD:/repo:ro" wipi-native-builder:baseline \
+  python3 -B /repo/tests/test_emulator_fixture.py
+docker run --rm --platform linux/amd64 --network none --read-only \
+  -v "$PWD:/repo:ro" -v "$PWD/native/out:/repo/native/out" \
+  wipi-native-builder:baseline python3 -B /repo/native/create-emulator-fixture.py
+```
+
+The generator requires the exact reviewed base identity in the handoff and rejects a changed, truncated or already configured ROM. A future baseline requires an explicit reviewed pin update. It uses the installed `naomi.add_or_update_section` helper to append one main-executable section at `0x0D000000`, then verifies the old section descriptors, executable bytes, entry points and appended bounds. The original base remains unchanged.
+
+Outputs under ignored `native/out/emulator/` are `configured-menu.bin`, `synthetic-config.bin`, `fixture-manifest.json` and `SHA256SUMS`. The 3,600-byte synthetic section contains a 64-byte configuration and 26 invented 136-byte game records. IDs equal zero-based list indices; initial selection is zero. The first title is one character, the last is 127 ASCII characters plus its terminator, and the list exceeds the 20 visible rows at 640×480. Digital controls, export region, two players, centered/full-range calibration, muted sound and disabled SRAM are fixed. Debug overlay, optional fallback font and filename mode are off. The tests compare configuration bytes with the actual host serializer expression, check record boundaries/IDs/names, and reject malformed payloads and wrong base identities. All four tests passed on 2026-11-13.
+
+Keep these outputs together with the matching base manifest, ELF and builder/package records in `native/out/` when preserving evidence. Fixture generation proves layout and identity only. No game ROM or BIOS is included, and a synthetic title is not a launchable game. Use isolated emulator persistence: existing native startup still writes emulated EEPROM game settings even with SRAM disabled. Browsing can be tested independently once emulator readiness is resolved, but Start/settings host round trips need a verified isolated message bridge. Source inspection shows that Flycast v2.7's stock raw-BIN cartridge route lacks that bridge; no adapter has been implemented. See [runtime readiness](../docs/native-runtime-test-plan.md#stage-e-isolated-emulator-preparation-and-baseline) for the current BIOS blocker; no render/navigation run has occurred.
 
 ## Before any hardware comparison
 
