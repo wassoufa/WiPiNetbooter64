@@ -39,6 +39,8 @@ The fork review identified the following candidates. Only the first enhancement 
 | 4 | Bulk game-list management | Proposed: enable/disable selected games without deleting ROMs, using locked, atomic CSV updates that preserve metadata. Distinguish browser-only hiding from changes that affect OSM; review Naomi/Naomi 2 filtering separately. |
 | 5 | Artwork and catalog corrections | Optional: compare individual artwork files and catalog rows with installed filenames; preserve custom entries such as the CRT tester. Themes are optional polish. |
 
+Additional investigation: [game artwork in the default arcade menu](docs/illustrated-osm-investigation.md), with joystick selection and a large image/title preview inspired by the phone interface. Platform support exists, but the current menu has no artwork payload and this fork lacks its renderer source. Recover a rebuildable baseline before a small prototype; no implementation or cabinet test has been performed.
+
 Sources for selective adaptation include [WiPiNetbooter-NG](https://github.com/metisnc/WiPiNetbooter-NG/tree/23412c084e5fc19d920308f4a2d1566c59181ce2), [thegoodguys80's interface work](https://github.com/thegoodguys80/WiPiNetbooter/tree/38fb4d42cadbde53ddb2d9c4639a84c6b6fafa13) and [AyanamiRei1's artwork/catalog changes](https://github.com/AyanamiRei1/WiPiNetbooter/tree/03282df71e0cf12a1361cbdc748f7b2f12008c77). Their alternative backends, configuration writers and full images need separate compatibility review before adoption. A phone-only launcher does not require a kiosk/display installer or an OS upgrade.
 
 ### Deferred CRT investigation

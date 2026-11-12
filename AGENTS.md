@@ -64,6 +64,8 @@ For changed PHP files, also run `php -l` inside the PHP container. Loading chang
 
 After approved deployment, use the acceptance checklist in `docs/loading-status.md`. Report offline results separately from hardware observations and state what remains unverified. Update the README and deployment notes when acceptance or rollback occurs.
 
-## Deferred CRT work
+## Deferred investigations
+
+The [illustrated OSM investigation](docs/illustrated-osm-investigation.md) is a separate roadmap candidate: native artwork plus joystick selection, not a web-page change. Renderer source is absent from this checkout; recover a rebuildable baseline before implementing it. Platform capability is documented, but no prototype or cabinet acceptance exists.
 
 See [CRT follow-up](docs/crt-sync-follow-up.md). The Toshiba PD2367 is already at 31 kHz; clicks accompany signal loss/return during Naomi reset. Sync reacquisition is a working explanation, not a diagnosis of chassis damage. `--disable-now-loading` is a candidate for a controlled comparison; the final reboot remains. Do not change reset timing as part of unrelated features, bypass protection/relays or modify the chassis to suppress clicking.
