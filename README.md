@@ -1,3 +1,5 @@
+Current roadmap and AI continuation notes: read the [handoff](https://github.com/wassoufa/WiPiNetbooter64/blob/codex/native-menu-baseline/docs/ai-handoff.md) and [ordered roadmap](https://github.com/wassoufa/WiPiNetbooter64/blob/codex/native-menu-baseline/docs/roadmap.md). Native baseline work lives on `codex/native-menu-baseline` in [draft PR #2](https://github.com/wassoufa/WiPiNetbooter64/pull/2); emulator and Naomi acceptance are pending. Follow that handoff and verify current source, PR and deployment status before resuming.
+
 ## Maintained fork
 
 This fork preserves the tested OSM default-save correction and ordinary-upload guard from a WiPi64 installation. The first enhancement adds asynchronous loading status, busy handling and failure reporting while retaining the existing transfer tools and Single Boot behavior.
