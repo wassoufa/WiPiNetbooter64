@@ -47,3 +47,16 @@ Host SDL input-event logs are present; no guest input-recognition trace, guest-c
 Private raw logs are retained outside the repository in `work/flycast-runtime/start-fix-clean-20261113/`. The ignored `native/out/runtime-tests/start-fix-20261113/` bundle retains matching build/runtime evidence; selected user-facing captures are under outer `outputs/start-fix-emulator/`. The private bundle index is `evidence-index-private.json`; it includes logs and matching artifacts. Eight screenshots are in the outer output directory. The primary agent owns the evidence manifest. Do not publish firmware, profiles, real settings or unreviewed raw evidence.
 
 Next bounded work: investigate guest-clock and input-delivery timing in the isolated emulator, using minimal reversible diagnostics if needed, before accepting a nominal one-second hold. Preserve the unexpected 1.588 s wall-time outcome and the ambiguous 8.432 s capture. Settings ACK/Back/save, gameplay, SRAM, Single Boot and memory soak remain open. A later Naomi settings comparison needs separate concrete approval; Naomi remains OFF. Keep PR #2 draft and defer artwork/video.
+
+## Event-only probe: emulator speed explains the timing (2026-11-13 ~18:16 AEDT, Claude)
+
+Two runs of the event-only diagnostic ROM (`native/emulator/build-start-event-diagnostic.py`, configured SHA-256 `d5ee81b0f7b5a28066de6b4a637f153219a36f35fdf1078e49c9ad885f94bf28`), interpreter Flycast, `rend.EmulateFramebuffer=yes`, same profile directory as the timing runs. The probe draws nothing until a route is decided. Return was held with a CGEvent key helper while Flycast was frontmost; host intervals are Flycast SDL `BUTTON down/up 8` log times.
+
+| Host hold | Guest frames | Guest hold: animation counter / independent `profile` timer | Route | Selection sends |
+| --- | --- | --- | --- | --- |
+| 1.516 s | 31 (903→934) | 0.516866 s / 0.517139 s | 1 = launch, list flyaway | 1 |
+| 3.483 s | 90 (899→989) | 1.517252 s / 1.518010 s | 2 = settings, decided at 1.000425 s before release; `Fetching game settings...` shown | 0 |
+
+Assessment: the menu's animation counter and an independent profiler interval agree within 1 ms, and both equal about 16.7 ms per guest frame. The earlier hypothesis that `animation_counter` omits work is **not supported**. The interpreter ran at roughly 34–44% of real time in these runs, so a 1.5 s host hold was only about 0.5 guest seconds. That accounts for the earlier canonical 1.588 s launch and 3.153 s settings outcomes. The Start fix behaved as designed: settings at the 1-second guest threshold with zero selection sends. The continuous-overlay ROM's different ratio (1.516 s host = 1.301 s guest) is consistent with emulator speed varying by workload, not with a menu clock defect.
+
+Limits: two runs; the canonical non-diagnostic ROM was not rerun; interpreter speed says nothing about Naomi, where guest time is real time. Physical JVS timing, settings ACK/Back/save and everything in the Phase B1 plan remain open. Captures are in outer `outputs/start-timing-emulator/probe-*.png`; logs are `event-probe-1500ms-claude.log.gz` and `event-probe-3500ms-claude.log.gz` in outer `work/flycast-runtime/start-timing-20261113/`. Flycast was closed after each run.
