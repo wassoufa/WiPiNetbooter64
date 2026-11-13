@@ -85,6 +85,28 @@ The extracted production `main_menu` fixture passes all four native tests normal
 
 Next bounded step: investigate guest clock/input delivery timing in the isolated emulator, with minimal reversible diagnostics if needed, before accepting nominal one-second behavior. Then separately scope an approved Naomi settings comparison. Naomi is OFF per the user; no SSH/Pi actions occurred in this check. Keep PR #2 draft; artwork/video and remaining hardware gates stay deferred.
 
+## Start timing diagnostics: interrupted checkpoint (2026-11-13 ~18:00 AEDT, recorded by Claude after Codex hit its usage limit)
+
+Codex's session stopped mid-investigation. This section records its last reported observations; Claude did not rerun them. Naomi stayed OFF; no Pi or cabinet action occurred.
+
+| Run (interpreter Flycast, synthetic fixture, nominal 1.5 s Return hold) | Reported observation |
+| --- | --- |
+| Diagnostic ROM, `rend.EmulateFramebuffer=yes` (needed to see the CPU-drawn overlay) | 1.516 s host key hold measured 1.301 s in the guest. Menu chose settings at 1.001 guest seconds, before release, with zero launch-branch calls. |
+| Diagnostic ROM, default renderer | Overlay hidden by the default renderer; entered settings. |
+| Unchanged canonical candidate (`8635542a…`), default renderer | Took the **launch** route again, matching the earlier 1.588 s result. |
+
+Codex's working hypothesis, **not proven**: the always-on overlay changes frame timing, so the diagnostic ROM does not represent the canonical one; and `animation_counter` in `main.c` advances only by the interval measured between `profile_start()` at the top of the loop and `profile_end()` after `video_display_on_vblank()`, so guest hold time can run slower than host wall time. This loop is inherited upstream code, so the original menu likely shares it. No production change was made for it. A host hold of about 1.5 s is therefore not a reliable settings gesture in this emulator; whether Naomi behaves the same is unknown.
+
+Files from this work, committed as work in progress and **not reviewed**:
+
+- [`native/emulator/build-start-diagnostic.py`](../native/emulator/build-start-diagnostic.py): builds the continuous-overlay diagnostic ROM into ignored `native/out/start-diagnostic/` (patch in `source.patch`). Never send a diagnostic ROM to the Pi or Naomi.
+- [`native/emulator/build-start-event-diagnostic.py`](../native/emulator/build-start-event-diagnostic.py): the planned event-only probe (records at press/release/decision only, no per-frame overlay). Output exists in ignored `native/out/start-diagnostic-events/`, but **no run of it was reported**.
+- [`native-naomi-settings-plan.md`](native-naomi-settings-plan.md): draft Phase B1 settings-only cabinet plan. Not approved, not executed. It includes limits from an independent read-only Claude Opus review: hold Start until the settings transition is visible before release; verify the exact Back label; a host save ACK alone does not prove persistence.
+
+Private evidence: outer `work/flycast-runtime/start-timing-20261113/` (logs, including `canonical-default-1500ms.log.gz`) and outer `outputs/start-timing-emulator/` (captures). At the time of writing a Flycast process (PID 70589, canonical 1.5 s run) was still running there and writing its log; close it before starting another run and confirm the gzip log is intact.
+
+Next bounded step: run the event-only probe with the default renderer and the same 1.5 s hold, and compare its guest elapsed time and route with the canonical launch result. If guest time under-runs wall time without the overlay, decide with the user whether to change the clock (a production change beyond the Start fix) or keep the cabinet rule "hold until settings is visible". Record the outcome in [the start-boundary result](results/2026-11-13-start-boundary-emulator.md). Phase B1 still needs separate user approval.
+
 ## Naomi Phase A completed: bounded navigation only
 
 The user explicitly approved the reviewed two-reset comparison, including startup EEPROM effects/incomplete physical rollback. After original navigation recovered following the user's manual Naomi restart, original and candidate cases were reported normal: ten Up/ten Down taps, two-second Up/Down holds, endpoints; both 60-second idle observations were stable. The candidate's familiar text-list appearance was expected, not a blank/error failure. See the [dated redacted hardware result](results/2026-11-13-naomi-phase-a.md).
