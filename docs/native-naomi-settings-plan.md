@@ -2,6 +2,8 @@
 
 Execution record: [2026-11-13 B1 settings/discard result](results/2026-11-13-naomi-b1.md). B1 completed with limited PASS: correct settings display, discard, main-list controls and original-menu return were confirmed. The procedure below is retained as the reviewed scope, not authorization to repeat it. Preserve [Phase A's result](results/2026-11-13-naomi-phase-a.md) and [original preparation/history](native-naomi-comparison-plan.md). PR #2 remains draft; artwork/video remain deferred.
 
+The subsequent [B2 private-clone save/readback](native-naomi-save-plan.md) completed with [limited PASS and confirmed original return](results/2026-11-13-naomi-b2.md); its bounded evidence remains separate from B1.
+
 ## Candidate and evidence gate
 
 Use only the canonical, non-diagnostic **bare** candidate with the installed host's fresh private catalog/configuration:
