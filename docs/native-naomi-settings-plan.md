@@ -1,6 +1,6 @@
 # Prepared Naomi settings-only comparison (Phase B1)
 
-This scope has not been executed. Fable recorded the user's approval and [read-only preflight](results/2026-11-13-naomi-b1-preflight.md); the backup has since passed a disposable offline recovery rehearsal. The user has reconfirmed Naomi is OFF and they are not at the cabinet. Wait for the user at the powered cabinet and their go, then refresh preflight and agree the test entry. This document itself does not authorize staging, host invocation, upload, reset or power actions. Preserve [Phase A's result](results/2026-11-13-naomi-phase-a.md) and [original preparation/history](native-naomi-comparison-plan.md); that earlier artifact's limited acceptance does not transfer to this candidate. PR #2 remains draft; artwork/video remain deferred.
+Execution record: [2026-11-13 B1 settings/discard result](results/2026-11-13-naomi-b1.md). B1 completed with limited PASS: correct settings display, discard, main-list controls and original-menu return were confirmed. The procedure below is retained as the reviewed scope, not authorization to repeat it. Preserve [Phase A's result](results/2026-11-13-naomi-phase-a.md) and [original preparation/history](native-naomi-comparison-plan.md). PR #2 remains draft; artwork/video remain deferred.
 
 ## Candidate and evidence gate
 

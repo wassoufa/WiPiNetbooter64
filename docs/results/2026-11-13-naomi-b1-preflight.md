@@ -1,5 +1,7 @@
 # Naomi Phase B1: read-only preflight, 2026-11-13
 
+Historical preflight window only; the later [B1 execution result](2026-11-13-naomi-b1.md) records the refreshed preflight, completed limited settings/discard check and original return. Earlier observations below retain their original scope.
+
 The user approved the [Phase B1 settings-only plan](../native-naomi-settings-plan.md) in chat on 2026-11-13 (evening, Australia/Melbourne), including the startup EEPROM clear/write and incomplete physical rollback, and asked for preflight to start. This record covers preflight only. **Nothing was uploaded, staged, stopped or changed on the Pi or Naomi.** Naomi was OFF per the user. Execution still needs the user at the cabinet and an explicit go.
 
 ## What was checked (Pi time 2026-11-13T07:26:20Z, by Claude)
@@ -14,7 +16,7 @@ Access was the Pi's existing web file-manager shell, read-only commands only (`s
 | Fresh private backup | 30 files, 2,328,083 bytes. Every archive member's hash, mode and numeric owner was verified against the live state. |
 | Installed `netdimm_menu.py` | Byte-identical to the repository copy at `sbin/piforce/dm_netboot/scripts/netdimm_menu.py`, so the plan's source references apply to the installed host. |
 | Host options | `--exe`, `--menu-settings-file`, `--verbose` exist. `--persistent` and `--debug-mode` exist and must not be used. |
-| Verbose evidence | Installed `netdimm/message.py` prints `Sending type: 0x…` and `Received type: 0x…` with lengths when verbose. This goes to **stdout**, not `/var/log/netdimm_menu.log`, so the candidate host's stdout must be captured to verify the forbidden-message checks. |
+| Verbose evidence | Historical assumption corrected by [actual B1 capture](2026-11-13-naomi-b1.md): `netdimm/message.py` prints verbose message IDs/lengths, but the installed host globally redirects `sys.stdout.write` to `logger.info`. Protocol records therefore appeared in `/var/log/netdimm_menu.log`; the separate console capture was empty. Preserve both fixed host log and console capture; stdout alone is insufficient. |
 | Save ACK | Confirmed in installed source: `0x1008` is sent outside the index-match block. Not relevant to B1 (no save), relevant to any later B2. |
 | Settings clone | Fresh private clone is byte-identical to the installed YAML and to the Phase A clone; `sram_save: false`. |
 | Candidate | `native/out/netbootmenu.bin` is `45ef4f20…` (1,461,916 bytes), matching the plan. |
