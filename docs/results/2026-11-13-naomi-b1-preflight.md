@@ -21,7 +21,7 @@ Access was the Pi's existing web file-manager shell, read-only commands only (`s
 
 ## Not done, and limits
 
-- Offline recovery rehearsal preserving numeric owners/modes was **not** repeated; archive members were hash/owner/mode-verified in memory only. The Phase A rehearsal used the same file list.
+- At Claude's preflight checkpoint, recovery rehearsal had not been repeated. The primary agent subsequently restored all **30 regular files** from this archive into a disposable container tmpfs with network disabled and the evidence mounted read-only. File bytes, SHA-256, numeric UID/GID and modes matched the manifest for every restored file. The private result is `restore-verification.json` beside the backup. No installed file or physical EEPROM/SRAM was restored.
 - Catalog index/title/serial reconciliation happens at execution: IDs are regenerated per host launch.
 - The test game has not been chosen. The user picks it at the cabinet.
 - Because no host is running, B1 execution starts with Naomi power-on by the user; the first upload is then the candidate. The "original return" upload is the second and last.
