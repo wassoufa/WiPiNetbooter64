@@ -1,6 +1,6 @@
 # Native text menu: bounded emulator observations
 
-Observed 2026-11-13, Australia/Melbourne. This is a rendering/navigation result, not cabinet acceptance, a performance benchmark or a leak-free soak. Read the [handoff](../ai-handoff.md), [roadmap](../roadmap.md) and [runtime plan](../native-runtime-test-plan.md) before continuing.
+Historical pre-Phase-A observation on 2026-11-13, Australia/Melbourne. Later records: [bounded Naomi Phase A and original-menu return](2026-11-13-naomi-phase-a.md), then [partial Start-fix emulator evidence](2026-11-13-start-boundary-emulator.md). This is a rendering/navigation result, not cabinet acceptance, a performance benchmark or a leak-free soak. Read the [handoff](../ai-handoff.md), [roadmap](../roadmap.md) and [runtime plan](../native-runtime-test-plan.md) before continuing.
 
 ## Reproduce the environment
 
@@ -38,8 +38,10 @@ Private local evidence is under ignored `native/out/runtime-tests/emulator-20261
 
 Not run or accepted: short/long Start, settings/Back/save exchange, real game launch, SRAM, orientation/fallback-font variants, a timed repeat-input test, long soak and target heap/texture telemetry. Stock raw-ROM Flycast lacks the host-message bridge needed for E3. Interpreter speed cannot establish Naomi or JIT performance. Balanced source fixtures and Astra's ownership review do not establish a leak-free runtime.
 
-The native candidate was **not deployed to Naomi**. A separately approved BIOS-only helper was run, then the original shipped menu was retransferred and its installed host left waiting for selection. Installed CSV/settings/menu hashes matched the preflight backup and no `.sram` file appeared. The CRT was off, so visual return and physical EEPROM/SRAM invariance remain unverified. The temporary settings path now aliases the original YAML so ordinary future UI edits persist normally; no additional reset was required.
+At this earlier BIOS/rendering checkpoint, the native candidate had **not yet been deployed to Naomi**. A separately approved BIOS-only helper was run, then the original shipped menu was retransferred and its installed host left waiting for selection. Installed CSV/settings/menu hashes matched the preflight backup and no `.sram` file appeared. The CRT was off at that checkpoint, so visual return was then unverified. The later approved Phase A recorded user-confirmed original-menu/controls return; physical EEPROM/SRAM invariance remains unverified. The temporary settings path now aliases the original YAML so ordinary future UI edits persist normally; no additional reset was required.
 
-## Next bounded work
+## Historical next-work note
+
+The following describes the plan at this earlier checkpoint; use the [current handoff](../ai-handoff.md) for the next action after Phase A and the Start-fix check.
 
 Preserve this evidence and finish any useful remaining isolated E2 cases. Then prepare milestone 3's exact candidate launch, backup/rollback, console capture and agreed Naomi case list. Obtain approval for that native comparison; the BIOS capture approval does not authorize it. Keep phone-status acceptance separate. Do not merge the draft native PR as cabinet-accepted or start artwork/video work on the strength of these observations alone.

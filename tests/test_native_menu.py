@@ -19,6 +19,7 @@ class NativeMenuTests(unittest.TestCase):
         cls.temp = tempfile.TemporaryDirectory()
         cls.binary = Path(cls.temp.name) / 'native-menu-test'
         cls.settings_binary = Path(cls.temp.name) / 'native-settings-test'
+        cls.start_binary = Path(cls.temp.name) / 'native-start-test'
         compiler = shutil.which('cc')
         if not compiler:
             raise RuntimeError('A host C compiler is required; run in the native builder container.')
@@ -53,6 +54,23 @@ class NativeMenuTests(unittest.TestCase):
             *flags, '-Wno-sign-compare', *includes, '-I' + cls.temp.name,
             str(ROOT / 'tests/fixtures/native_settings_test.c'),
             '-o', str(cls.settings_binary),
+        ], check=True)
+
+        regions = [('static int selected_game =', 'static int expecting_boot ='),
+                   ('static int sending_game_size =', 'static game_options_t *game_options ='),
+                   ('#define SCREEN_MAIN_MENU', '#define ERROR_BOX_WIDTH'),
+                   ('unsigned int main_menu(', 'unsigned int game_settings_load(')]
+        extracted = []
+        for start, end in regions:
+            offset = source.index(start)
+            line = source.count('\n', 0, offset) + 1
+            extracted.append(f'#line {line} "{source_path}"\n' +
+                             source[offset:source.index(end, offset)])
+        (Path(cls.temp.name) / 'native_start_source.c').write_text('\n'.join(extracted))
+        subprocess.run([
+            *flags, '-Wno-sign-compare', *includes, '-I' + cls.temp.name,
+            str(ROOT / 'tests/fixtures/native_start_test.c'),
+            '-o', str(cls.start_binary),
         ], check=True)
 
     @classmethod
@@ -92,6 +110,10 @@ class NativeMenuTests(unittest.TestCase):
         result = subprocess.run([str(self.settings_binary)], capture_output=True, check=True)
         self.assertIn(b'settings prefixes cleaned up; caller failure, mismatch and success ownership', result.stdout)
         self.assertIn(b'late response without ACK', result.stdout)
+
+    def test_start_release_boundary_and_reinitialization(self):
+        result = subprocess.run([str(self.start_binary)], capture_output=True, check=True)
+        self.assertIn(b'Start release boundary, continuous hold, lock and reinit', result.stdout)
 
 
 if __name__ == '__main__':
