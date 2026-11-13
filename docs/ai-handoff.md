@@ -111,6 +111,8 @@ Private evidence: outer `work/flycast-runtime/start-timing-20261113/` (logs, inc
 
 **Current state for whoever resumes (2026-11-13 evening):** PR #2 head is the commit containing this text; the checkout was clean and pushed. No emulator is running. Naomi is OFF per the user; nothing was sent to the Pi or cabinet after Phase A. Candidate for any cabinet work is the bare Start-fix base `45ef4f20…` only, never a diagnostic ROM. Claude's recommended order, pending user decision: (1) user approves or edits Phase B1, (2) fresh read-only preflight and backup, (3) one approved cabinet window for B1, (4) phone loading-status acceptance in its own window, (5) only then artwork.
 
+**Phase B1 approved and preflight done (2026-11-13 evening):** the user approved the B1 plan in chat, including EEPROM effects. Claude ran the [read-only preflight](results/2026-11-13-naomi-b1-preflight.md): installed files unchanged since Phase A apart from the menu log, no host running, fresh verified private backup and settings clone in outer `work/naomi-b1-preflight-20261113/`. Nothing was uploaded or changed. **Next action: wait for the user to be at the cabinet and say go**, then rerun `preflight.py`, agree the test game, and execute B1 exactly as planned, capturing the candidate host's stdout. The sentence below is historical.
+
 Next bounded step: user review of the draft [Phase B1 settings-only plan](native-naomi-settings-plan.md). It needs fresh, concrete approval before any Pi or cabinet action. Emulator timing no longer blocks it; physical Start timing on Naomi is still unobserved, so keep the rule "hold Start until the settings transition is visible".
 
 ## Naomi Phase A completed: bounded navigation only
