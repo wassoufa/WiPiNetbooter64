@@ -15,7 +15,7 @@ The recovered source predates WiPi's SRAM additions. This baseline adds:
 - `0x2004` restore handling shared by all eight screen receive paths, including the unpack/loading screens. It accepts exactly 32 KiB only when enabled, uses the uncached SRAM mirror, frees consumed messages and preserves unrelated messages for their original screen. Rejected restores and snapshot send failures are logged to the host.
 - An SRAM enable/disable setting carried through both save-and-exit control paths. Configuration saves still use the host's 64-byte protocol.
 
-The original renderer's joystick, short-Start selection, long-Start settings and text-list rendering remain in place. They have compiled, but their runtime behavior has not been verified in an emulator or on the cabinet. This is not a byte-for-byte reproduction of the installed binary.
+The original renderer's joystick, short-Start selection, long-Start settings and text-list rendering remain in place. The synthetic text list and bounded arrow-key navigation have now run in an interpreter-only emulator; see the [dated observations](../docs/results/2026-11-13-native-emulator.md). Start/settings exchange and native cabinet behavior remain unverified. This is not a byte-for-byte reproduction of the installed binary.
 
 ## Build and local proof
 
@@ -52,7 +52,7 @@ NATIVE_TEST_CFLAGS='-g -O1 -fno-omit-frame-pointer -fsanitize=address,undefined'
   python3 -B tests/test_native_menu.py
 ```
 
-Allocation counters measure only the exercised ownership paths. The settings tests do not cover allocation exhaustion or arbitrary malformed count fields. Host fixtures and sanitizers do not exercise real battery SRAM, JVS, video, fonts, NetDIMM communications or long-running menu behavior. Passing these checks does not exclude all hardware/runtime leaks; emulator and cabinet acceptance remain pending.
+Allocation counters measure only the exercised ownership paths. The settings tests do not cover allocation exhaustion or arbitrary malformed count fields. Host fixtures and sanitizers do not exercise real battery SRAM, JVS, video, fonts, NetDIMM communications or long-running menu behavior. Passing these checks does not exclude all hardware/runtime leaks; full emulator coverage, target memory acceptance and cabinet acceptance remain pending.
 
 ## Offline emulator fixture
 
@@ -71,7 +71,7 @@ The generator requires the exact reviewed base identity in the handoff and rejec
 
 Outputs under ignored `native/out/emulator/` are `configured-menu.bin`, `synthetic-config.bin`, `fixture-manifest.json` and `SHA256SUMS`. The 3,600-byte synthetic section contains a 64-byte configuration and 26 invented 136-byte game records. IDs equal zero-based list indices; initial selection is zero. The first title is one character, the last is 127 ASCII characters plus its terminator, and the list exceeds the 20 visible rows at 640×480. Digital controls, export region, two players, centered/full-range calibration, muted sound and disabled SRAM are fixed. Debug overlay, optional fallback font and filename mode are off. The tests compare configuration bytes with the actual host serializer expression, check record boundaries/IDs/names, and reject malformed payloads and wrong base identities. All four tests passed on 2026-11-13.
 
-Keep these outputs together with the matching base manifest, ELF and builder/package records in `native/out/` when preserving evidence. Fixture generation proves layout and identity only. No game ROM or BIOS is included, and a synthetic title is not a launchable game. Use isolated emulator persistence: existing native startup still writes emulated EEPROM game settings even with SRAM disabled. Browsing can be tested independently once emulator readiness is resolved, but Start/settings host round trips need a verified isolated message bridge. Source inspection shows that Flycast v2.7's stock raw-BIN cartridge route lacks that bridge; no adapter has been implemented. See [runtime readiness](../docs/native-runtime-test-plan.md#stage-e-isolated-emulator-preparation-and-baseline) for the current BIOS blocker; no render/navigation run has occurred.
+Keep these outputs together with the matching base manifest, ELF and builder/package records in `native/out/` when preserving evidence. Fixture generation proves layout and identity only. No game ROM or BIOS is included, and a synthetic title is not a launchable game. Use isolated emulator persistence: existing native startup still writes emulated EEPROM game settings even with SRAM disabled. Browsing can be tested independently once emulator readiness is resolved, but Start/settings host round trips need a verified isolated message bridge. Source inspection shows that Flycast v2.7's stock raw-BIN cartridge route lacks that bridge; no adapter has been implemented. The BIOS prerequisite is now resolved through a private own-board capture; see [runtime readiness](../docs/native-runtime-test-plan.md#stage-e-isolated-emulator-preparation-and-baseline) and the [bounded rendering/navigation result](../docs/results/2026-11-13-native-emulator.md).
 
 ## Before any hardware comparison
 
