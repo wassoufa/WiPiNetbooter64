@@ -12,8 +12,8 @@ import struct
 from naomi import NaomiRom, add_or_update_section
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE_BYTES = 1461884
-BASE_SHA256 = '3ec9d4faede2fa57a1a3cf1993d5eef7e2aefcb00d7ce800432d93a819fd62a2'
+BASE_BYTES = 1461916
+BASE_SHA256 = '45ef4f205449bb8cbae7ed74c8d064e6140de4b9ac4469b8c420c7941df1a035'
 CONFIG_ADDRESS = 0x0D000000
 CONFIG_SIZE = 64
 GAME_SIZE = 136

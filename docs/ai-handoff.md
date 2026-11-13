@@ -72,6 +72,21 @@ When state changes, update this file's date, source/artifact identities and acce
 
 Current handoff checkpoint: the isolated emulator is closed. The approved Naomi Phase A comparison completed, and the original shipped menu/controls were returned and user-confirmed. Its normal installed host remains active with real YAML; candidate is not selected persistently. PR #2 remains draft. Private logs/configured payloads/settings/photos stay outside tracked source.
 
+## Next task: emulator check of the Start hold/release fix (in progress, 2026-11-13, Claude)
+
+**Done:** commit `633d284` fixes Start release at the 1-second hold threshold (see the candidate artifact section). The base was rebuilt (`45ef4f20…`, 1,461,916 bytes). The [fixture generator](../native/create-emulator-fixture.py) pin now names that base; `tests/test_emulator_fixture.py` passes in the builder image. The regenerated synthetic `native/out/emulator/configured-menu.bin` is SHA-256 `8635542a16f90acf6eb3fcafa4a800059baaab80f93387670d3be60b4c26ab62`, with the same `synthetic-config.bin` (`d86fba07…`). Phase A artifacts are backed up in outer `work/wipi-fork-out-phase-a-backup/`. The interpreter Flycast loaded this ROM, but no input was sent because the Mac screen was locked (`CGSSessionScreenIsLocked=Yes`); it was stopped and its log compressed to `work/flycast-runtime/start-fix-run.log.gz`. **No emulator result exists yet.**
+
+**To run:** the Mac must be unlocked and awake, and the process sending keys needs macOS Accessibility permission. Avoid `osascript … System Events`; it hung on a permission prompt. Launch from `work/flycast-runtime` with the [interpreter recipe](flycast-local-build.md#supported-interpreter-only-fallback-after-startup-failure) plus `-config config:Dreamcast.Region=0`. Wait about 1 minute for the menu. Build the key helper with `swiftc -O native/emulator/hold-key.swift -o <outside-repo>/hold-key`. Keycodes: Return/Start 36, Down 125, Up 126, F12 screenshot 111 (saved to `~/Pictures/Flycast-*.png`).
+
+| Case | Command | Expected |
+| --- | --- | --- |
+| Menu visible | `hold-key 111 0.1` | Synthetic list rendered |
+| Tap Start | `hold-key 36 0.2`, F12 after ~1 s and ~6 s | Launch path: no settings screen; "Communication Error!" after ~5 s (no host bridge) |
+| Long hold | `hold-key 36 1.5`, F12 immediately | "Fetching game settings...", then "Communication Error!" after ~5 s |
+| Threshold release (the fix) | Repeat `hold-key 36` with 0.95, 1.00, 1.05 s, F12 each time | Below 1 s may launch; at/after the 1 s frame must always show "Fetching game settings...", never the launch path |
+
+Relaunch the emulator if the error screen does not return to the menu. Record results in a new `docs/results/` file from the [template](templates/runtime-test-result.md), send the screenshots to the user, then close the emulator and compress the verbose log. Interpreter frame timing differs from Naomi, so threshold timing here is not cabinet timing. Cabinet testing of this ROM needs a separate approval.
+
 ## Naomi Phase A completed: bounded navigation only
 
 The user explicitly approved the reviewed two-reset comparison, including startup EEPROM effects/incomplete physical rollback. After original navigation recovered following the user's manual Naomi restart, original and candidate cases were reported normal: ten Up/ten Down taps, two-second Up/Down holds, endpoints; both 60-second idle observations were stable. The candidate's familiar text-list appearance was expected, not a blank/error failure. See the [dated redacted hardware result](results/2026-11-13-naomi-phase-a.md).
