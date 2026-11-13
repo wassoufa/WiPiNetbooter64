@@ -31,6 +31,8 @@ The implementation head above is a dated checkpoint, not a promise that future d
 
 ## Candidate artifact and reproducibility record
 
+**Post-Phase-A source change (2026-11-13, not yet run on emulator or Naomi):** `main_menu` in `screens.c` now treats a Start release on or after the 1-second hold frame as a settings request, never a game launch. Previously the release was handled before the hold check in the same frame, so a release at the threshold or during a slow frame launched the game. This deliberately differs from the original menu's inherited behaviour. The rebuilt base is now 1,461,916 bytes, SHA-256 `45ef4f205449bb8cbae7ed74c8d064e6140de4b9ac4469b8c420c7941df1a035`. The Phase A-tested `3ec9d4fa…` artifacts below are preserved outside the checkout in `../wipi-fork-out-phase-a-backup/`. The record below describes the Phase A artifact.
+
 The rebuilt, **unconfigured base** `native/out/netbootmenu.bin` is 1,461,884 bytes, serial `BRP0`, date `2026-11-13`, main/test entry points `0x0C021000` / `0x0C021004`.
 
 ```text

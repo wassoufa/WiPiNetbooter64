@@ -719,7 +719,13 @@ unsigned int main_menu(state_t *state, int reinit)
             }
             if (controls.start_released)
             {
-                if (booting == 0 && holding == 1)
+                if (booting == 0 && holding == 1 && (int)((state->animation_counter - holding_animation) * 10.0) >= 10)
+                {
+                    // Released on/after the 1s hold frame (incl. slow frames): settings, never a launch.
+                    selected_game = cursor;
+                    new_screen = SCREEN_GAME_SETTINGS_LOAD;
+                }
+                else if (booting == 0 && holding == 1)
                 {
                     // Made a selection!
                     booting = 1;
