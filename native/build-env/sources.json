@@ -1,0 +1,7 @@
+[
+  {"name":"libnaomi.tar.gz","url":"https://codeload.github.com/DragonMinded/libnaomi/tar.gz/c840eb85384725182392ee3361706e80ae4ca4c0","sha256":"ee04ce5d3c7eaeaa6ee57ae8d6fb4fba03e46c828b8589484edce1a8858cdac3"},
+  {"name":"zlib-1.2.13.tar.gz","url":"https://zlib.net/fossils/zlib-1.2.13.tar.gz","sha256":"b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30"},
+  {"name":"bzip2-1.0.8.tar.gz","url":"https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz","sha256":"ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269"},
+  {"name":"libpng-1.6.37.tar.gz","url":"https://download.sourceforge.net/libpng/libpng-1.6.37.tar.gz","sha256":"daeb2620d829575513e35fecc83f0d3791a620b9b93d800b763542ece9390fb4"},
+  {"name":"freetype-2.10.2.tar.gz","url":"https://download.savannah.gnu.org/releases/freetype/freetype-2.10.2.tar.gz","sha256":"e09aa914e4f7a5d723ac381420949c55c0b90b15744adce5d1406046022186ab"}
+]

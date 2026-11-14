@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 19bdfee..1d4e896 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1418,0 +1419 @@ if(NOT LIBRETRO)
++			if(USE_VULKAN)
+@@ -1421,0 +1423 @@ if(NOT LIBRETRO)
++			endif()
+@@ -1533,0 +1536,6 @@ endif()
++
++# Local macOS build workaround: do not inherit Syphon C++ PCH into .mm files.
++# Syphon retains its own prefix header (including SYPHONLOG).
++if(APPLE AND NOT IOS)
++    set_property(TARGET flycast PROPERTY DISABLE_PRECOMPILE_HEADERS ON)
++endif()

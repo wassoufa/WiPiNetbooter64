@@ -1,0 +1,1 @@
+typedef struct test_texture texture_description_t;
