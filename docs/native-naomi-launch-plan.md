@@ -1,6 +1,6 @@
 # Naomi B3: proposed one-game launch and original return
 
-Prepared after [B2's limited PASS](results/2026-11-13-naomi-b2.md). On 2026-11-14 the user powered Naomi on and confirmed “Checking network” at the cabinet. Fresh read-only inspection found no running menu/sender/launcher host. **No payload has been sent; approval of the refreshed four-phase run below is pending.** PR #2 stays draft.
+[B3 completed with limited PASS](results/2026-11-14-naomi-b3.md): one standard-game launch, user-confirmed normal play and original-menu return. Four payload phases completed after fresh approval. This document preserves the reviewed procedure and its pre-execution readiness observations; it is not permission to repeat the run. PR #2 stays draft.
 
 ## Bounded proposal and source route
 
