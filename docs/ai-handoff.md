@@ -1,8 +1,12 @@
 # Start here: AI handoff and current state
 
-State reviewed **2026-11-13 Australia/Melbourne**. This is the current-state index; [the roadmap](roadmap.md) owns sequence/gates, [the runtime plan](native-runtime-test-plan.md) owns capture and acceptance, and [the blank result template](templates/runtime-test-result.md) owns individual observations. Recheck Git/PR/deployment records on resuming; do not assume a source merge installed anything.
+State reviewed **2026-11-14 Australia/Melbourne**. This is the current-state index; [the roadmap](roadmap.md) owns sequence/gates, [the runtime plan](native-runtime-test-plan.md) owns capture and acceptance, and [the blank result template](templates/runtime-test-result.md) owns individual observations. Recheck Git/PR/deployment records on resuming; do not assume a source merge installed anything.
 
-## Current checkpoint: B2 limited PASS; original returned
+## Current checkpoint: B3 preflight ready; approval pending
+
+On 2026-11-14 the user reported Naomi ON, confirmed “Checking network” and that they are at the cabinet. Read-only SSH found no running menu/sender/launcher host. Fresh 24-critical-file checks, selected-game compressed/unpacked identity and 30-file offline backup restoration rehearsal passed. A matching read-only pigz trial took 1.473 seconds; native timeout is 5.0 guest seconds, not a guaranteed wall-time budget. No upload or settings write occurred. The [refreshed B3 plan](native-naomi-launch-plan.md) proposes **four payload phases**: original baseline, candidate, standard Marvel vs. Capcom 2 launch, original return. Approval remains pending; no old PID or B2 approval is reusable. Astra became unavailable at its usage limit; recorded draft/source feedback and bounded Claude Opus review informed preparation. Keep PR #2 draft and update this checkpoint as the run proceeds.
+
+### B2 limited PASS; original returned
 
 The bounded [B2 save/readback](results/2026-11-13-naomi-b2.md) completed with **limited PASS**: one private-clone Demo Sound Half Off → On save, independent parsed YAML/128-byte EEPROM proof and fresh same-host UI refetch, followed by discard. Complete capture contains exactly eight expected packets and one save, with no observed launch/config/SRAM packets. The verified candidate exited before exact clone restoration. Normal original host sending was logged at 12:18:40.898 UTC and waiting at 12:18:48.665; the user confirmed original menu/controls. All 24 installed non-log files matched bytes/hash/numeric ownership/mode, real YAML was unchanged and SRAM remained README only. Exactly two upload/reset cycles completed. The normal original host was verified with real YAML and no candidate/clone flags at this checkpoint; recheck process state on resuming. Keep PR #2 draft; the [plan](native-naomi-save-plan.md) records the executed scope. Cold-host persistence, gameplay, real SRAM, Single Boot and target resource/soak remain open. No further live action is implied.
 
